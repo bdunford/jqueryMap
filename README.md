@@ -1,4 +1,4 @@
 jqueryMap
 =========
 
-testing jquery map ui
+sample project for testing jquery-ui-map 
