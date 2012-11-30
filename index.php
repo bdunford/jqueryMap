@@ -1,70 +1,96 @@
 <html>   
-<head>
-<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-<script type="text/javascript" src="./js/jquery.ui.map.full.min.js"></script>
+    <head>
+        <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+        <script type="text/javascript" src="./js/jquery.ui.map.full.min.js"></script>
+        <script type="text/javascript" src="./js/jquery.ui.map.extensions.js"></script>
 
 
-<link type="text/css" rel="stylesheet" href="./css/screen.css"></link>
-<script type="text/javascript" >
-(function($) {
+        <link type="text/css" rel="stylesheet" href="./css/screen.css"></link>
+        <script type="text/javascript" >
+            (function($) {
     
-    $(window).load(function(){
+                $(window).load(function(){
         
                     //Gonna turn this into a class.  
-                    var currLocation = '39.606772,-84.139151';
+                    var currLocation //= new google.maps.LatLng('39.606772','-84.139151');
                     var timeout 
                     var map
+                    
                         
                     function addLocations() {
                         var bounds = map.get('map').getBounds();
-                        console.log(bounds);
                         
-                        dropPin('1','39.601772','-84.133151','Store 1');
-                        dropPin('2','39.602772','-84.133151','Store 2');
-                        dropPin('3','39.603772','-84.133151','Store 3');
-                        dropPin('4','39.604772','-84.133151','Store 4');
+                        getLocations(bounds);
+                        
+                        dropPin('1',new google.maps.LatLng('39.601772','-84.133151'),'Store 1',true);
+                        dropPin('2',new google.maps.LatLng('39.602772','-84.133151'),'Store 2',true);
+                        dropPin('3',new google.maps.LatLng('39.603772','-84.133151'),'Store 3',true);
+                        dropPin('4',new google.maps.LatLng('39.604772','-84.133151'),'Store 4',true);
                     }
                     
                     
                     function getLocations(bounds)
                     {
+                        var ne = bounds.getNorthEast();
+                        var sw = bounds.getSouthWest();
+                        console.log(ne.lat());
+                        console.log(ne.lng());
+                        console.log(sw.lat());
+                        console.log(sw.lng());
                         
+                        //make a randomizer here
                     }
                     
-                    function dropPin(id, geolat, geolong, content, icon) {
-                        map.addMarker({'id': id, 'position': geolat + ',' + geolong, 'icon': icon}).click(function(){map.openInfoWindow({ 'content': content }, this)});
+                    function dropPin(id, latlong, content, clickable, icon) {
+                        map.addMarker({'id': id, 'position': latlong, 'icon': icon, 'clickable' : clickable}).click(function(){map.openInfoWindow({ 'content': content }, this)});
                     }
-        
+                    
+                    
    
-					$('#map_canvas').gmap({'center': currLocation, 'zoom': 15, 'disableDefaultUI':true, 'minZoom': 6, 'callback': function() {
+                    $('#map_canvas').gmap({'zoom': 10, 'disableDefaultUI':true, 'minZoom': 5, 'callback': function() {
 						
-                        map = this;
-                                               
-						map.addMarker({'id': 'current-location','position': map.get('map').getCenter(), 'bounds':false, 'icon': './images/current-location.png'}).click(function() {
-							map.openInfoWindow({ 'content': 'Your Location' }, this);
-						});	
+                            map = this;
                         
-                        google.maps.event.addListener(map.get('map'), 'tilesloaded', function() {
-                            clearTimeout(timeout);
-                            timeout = setTimeout(function(){addLocations();}, 750);
-                        });
+                            map.getCurrentPosition(function(position, status) {
+                           
+                                if (status == "OK" && !currLocation) {
+                                    currLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+                                } 
+                                else if (!currLocation) 
+                                {
+                                    map.get('map').setZoom(5);
+                                    currLocation = new google.maps.LatLng('39.500000','-98.350000')
+                                }
+                           
+                                map.get('map').setCenter(currLocation);
+                                dropPin('0',currLocation,'Your Location',false,'./images/current-location.png' );
+                           
+                                google.maps.event.addListener(map.get('map'), 'bounds_changed', function() {
+                                    clearTimeout(timeout);
+                                    timeout = setTimeout(function(){addLocations();}, 750);
+                                });
+                           
+                           
+                            });
+
+                       
                         
                      
-					}});
+                        }});
 
         
-    });
-})(jQuery);
-</script>
-</head>
-<body>
-<h1>My Map</h1>
-<div id="phone-frame">
-  <div id="map_canvas">
-</div>
-</div>
-</body>
-<footer>
-</footer>
+                });
+            })(jQuery);
+        </script>
+    </head>
+    <body>
+        <h1>My Map</h1>
+        <div id="phone-frame">
+            <div id="map_canvas">
+            </div>
+        </div>
+    </body>
+    <footer>
+    </footer>
 </html>
