@@ -19,11 +19,11 @@
                     function addLocations() {
                         var bounds = map.get('map').getBounds();
                         console.log(bounds);
-                        map.addMarker({'position': '39.603772,-84.133151'}).click(function(){map.openInfoWindow({ 'content': 'Store 1' }, this)});
-                        map.addMarker({'position': '39.604772,-84.133151'}).click(function(){map.openInfoWindow({ 'content': 'Store 2' }, this)});
-                        map.addMarker({'position': '39.605772,-84.133151'}).click(function(){map.openInfoWindow({ 'content': 'Store 3' }, this)});
-                        map.addMarker({'position': '39.602772,-84.133151'}).click(function(){map.openInfoWindow({ 'content': 'Store 4' }, this)});
-                        //map.addMarker({'position': map.get('map').getCenter()}).click(function(){map.openInfoWindow({ 'content': 'Store 4' }, this)});
+                        
+                        dropPin('1','39.601772','-84.133151','Store 1');
+                        dropPin('2','39.602772','-84.133151','Store 2');
+                        dropPin('3','39.603772','-84.133151','Store 3');
+                        dropPin('4','39.604772','-84.133151','Store 4');
                     }
                     
                     
@@ -32,9 +32,8 @@
                         
                     }
                     
-                    function dropPin(id, geolong, geolat, icon, content) {
-                        
-                        map.addMarker({'position': geolat + ',' + geolong}).click(function(){map.openInfoWindow({ 'content': 'Store 1' }, this)});
+                    function dropPin(id, geolat, geolong, content, icon) {
+                        map.addMarker({'id': id, 'position': geolat + ',' + geolong, 'icon': icon}).click(function(){map.openInfoWindow({ 'content': content }, this)});
                     }
         
    
