@@ -1,5 +1,6 @@
 <html>   
     <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
         <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
         <script type="text/javascript" src="./js/jquery.ui.map.full.min.js"></script>
@@ -16,6 +17,10 @@
                     var specificLocation; //= new google.maps.LatLng('39.606772','-84.139151');
                     var timeout; 
                     var map;
+                    var initialzoom = 12;
+                    var minzoom = 5;
+                    
+                    
                     
                         
                     function addLocations() {
@@ -39,11 +44,29 @@
                         console.log(ne.lng());
                         console.log(sw.lat());
                         console.log(sw.lng());
+                        console.log(map);
                         
                         //make a randomizer here
                     }
                     
                     function dropPin(id, latlong, content, clickable, icon) {
+                        mk = map.get('markers')[id];
+                        if (id == 0)
+                        {
+                          if (mk) 
+                          {
+                           console.log("marker deleted");
+                           mk.setMap(null);        
+                          }
+                        } else {
+                            
+                            if (mk) 
+                            {
+                                console.log("marker not added");
+                                return;
+                            }
+                        }
+                        
                         map.addMarker({'id': id, 'position': latlong, 'icon': icon, 'clickable' : clickable}).click(function(){map.openInfoWindow({ 'content': content }, this)});
                     }
                     
@@ -68,6 +91,12 @@
                            });   
                     }
                     
+                    
+                    function setZoom(z)
+                    {
+                         map.get('map').setZoom(z); 
+                    }
+                    
                     function addBoundsChangedEvent() {
                         google.maps.event.addListener(map.get('map'), 'bounds_changed', function() {
                                     clearTimeout(timeout);
@@ -75,7 +104,7 @@
                                 });
                     }
 
-                    $('#map_canvas').gmap({'zoom': 10, 'disableDefaultUI':true, 'minZoom': 1, 'callback': function() {
+                    $('#map_canvas').gmap({'zoom': initialzoom, 'disableDefaultUI':true, 'minZoom': minzoom, 'callback': function() {
 						
                             map = this;
                             
@@ -84,7 +113,7 @@
                                 setCurrentLocation(new google.maps.LatLng('39.500000','-98.350000'), function(status){
                                    if (status != 'OK') 
                                    {
-                                       map.get('map').setZoom(5);  
+                                       setZoom(minzoom);  
                                    }
                                    addBoundsChangedEvent();
                                 });
@@ -97,22 +126,37 @@
                             
                            
                     }});
+                    
+                    
+                    $('#btnCloc').live("click", function(){ 
+                        setCurrentLocation(null, function(status){
+                            if (status == 'OK')
+                            {
+                                setZoom(initialzoom);
+                            }
+                        }); 
+                       
+                    }); 
+                    
+                    $('#btnEloc').live("click", function(){
+                       console.log($('#address').val());
+                       
+                    });
+                    
+                    
+                    
                 });
             })(jQuery);
         </script>
     </head>
-    <body>
-        <h1>My Map</h1>
-        <div id="phone-frame">
-            <div id="map-controls">
-                
+    <body>    
+       <div id="map_canvas">
+       </div>     
+        <div id="map-controls">
+                <button id="btnCloc" type="button">O</button> 
+                <input id="address" type="text" />
+                <button id="btnEloc" type="button">&rsaquo;</button>
             </div>
-            <div id="map_canvas">
-            </div>    
-            <div id="map-location">
-                
-            </div>
-        </div>
     </body>
     <footer>
     </footer>

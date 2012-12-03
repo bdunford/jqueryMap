@@ -1,16 +1,12 @@
 #map_canvas {
-    border: 4px solid black;
+    
     display: block;
     width: 320px;
-    height: 480px;
-    postion: absolute;
-    top: 110px;
-    left: 15px;
-   
+    height: 300px;
+    padding: 0;
+    margin: 0;
 }
-#phone-frame {
-    display: block;
-    width: 360px;
-    height: 710px;
-    background-image:url("../images/iphone-frame.png");
+
+body {
+    margin:0;
 }
