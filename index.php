@@ -11,14 +11,15 @@
         <script type="text/javascript" >
             (function($) {
     
-                $(window).load(function(){
+                $(document).ready(function(){
         
                     //Gonna turn this into a class.  
                     var specificLocation; //= new google.maps.LatLng('39.606772','-84.139151');
                     var timeout; 
                     var map;
-                    var initialzoom = 12;
+                    var initialzoom = 10;
                     var minzoom = 5;
+                    var geocoder = new google.maps.Geocoder();
                     
                     
                     
@@ -55,14 +56,12 @@
                         {
                           if (mk) 
                           {
-                           console.log("marker deleted");
                            mk.setMap(null);        
                           }
                         } else {
                             
                             if (mk) 
                             {
-                                console.log("marker not added");
                                 return;
                             }
                         }
@@ -78,7 +77,7 @@
                     function setCurrentLocation(defaultLocation, callback)
                     {
                          map.getCurrentPosition(function(position, status) {
-                                if (status == "OK") {
+                                if (status == google.maps.GeocoderStatus.OK) {
                                     setLocationAndCenter(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
                                 } 
                                 else if (defaultLocation) 
@@ -111,7 +110,7 @@
                             if (!specificLocation)
                             {
                                 setCurrentLocation(new google.maps.LatLng('39.500000','-98.350000'), function(status){
-                                   if (status != 'OK') 
+                                   if (status != google.maps.GeocoderStatus.OK) 
                                    {
                                        setZoom(minzoom);  
                                    }
@@ -130,7 +129,7 @@
                     
                     $('#btnCloc').live("click", function(){ 
                         setCurrentLocation(null, function(status){
-                            if (status == 'OK')
+                            if (status == google.maps.GeocoderStatus.OK)
                             {
                                 setZoom(initialzoom);
                             }
@@ -139,7 +138,12 @@
                     }); 
                     
                     $('#btnEloc').live("click", function(){
-                       console.log($('#address').val());
+                        var addr = $('#address').val();
+                        geocoder.geocode( { 'address': addr }, function(results, status) {
+                           if (status == google.maps.GeocoderStatus.OK) {
+                               setLocationAndCenter(results[0].geometry.location);
+                           } 
+                        });
                        
                     });
                     
