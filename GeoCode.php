@@ -14,10 +14,12 @@
         
         
         $.getJSON('./json/data.json', function(data) {
+          
            $.each(data, function(k, v) {
+             
                 geocoder.geocode( { 'address': v.addr }, function(results, status) {
                     if (status == google.maps.GeocoderStatus.OK) {
-                       var qry = "update stores set latitue='" + results[0].geometry.location.lat() + "', logitute ='" + results[0].geometry.location.lng() + "' where id = '" + v.id + "'<br />";
+                       var qry = "update stores set Latitude='" + results[0].geometry.location.lat() + "', Longitude ='" + results[0].geometry.location.lng() + "' where id = '" + v.id + "'<br />";
                        $('body').append(qry);
                     }            
                 });
