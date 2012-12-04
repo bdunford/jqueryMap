@@ -1,5 +1,9 @@
 <?php
-//
+
+
+
+
+
 ?>
 <html>
     <head>
@@ -11,20 +15,31 @@
     $(window).load(function(){
         
         var geocoder = new google.maps.Geocoder();
-        
-        
-        $.getJSON('./json/data.json', function(data) {
-          
+
+    
+        $.ajax({url: 'Addresses.php',
+            error: function(x,h,r) {console.log(r)},
+            success: function(data) {
            $.each(data, function(k, v) {
-             
-                geocoder.geocode( { 'address': v.addr }, function(results, status) {
+   
+                geocoder.geocode( { 'address': v.address }, function(results, status) {
+                    var lat;
+                    var lng; 
                     if (status == google.maps.GeocoderStatus.OK) {
-                       var qry = "update stores set Latitude='" + results[0].geometry.location.lat() + "', Longitude ='" + results[0].geometry.location.lng() + "' where id = '" + v.id + "'<br />";
-                       $('body').append(qry);
-                    }            
+                        lat = results[0].geometry.location.lat();
+                        lng = results[0].geometry.location.lng();
+                    } else {
+                        lat = 'err';
+                        lng = 'err';
+                    }
+                    
+                    $.ajax({url: 'Addresses.php?id=' + v.id + '&lat=' + lat + '&lng=' + lng, success: function(data) {
+                            $('body').append(v.address + ' ' + lat + ' ' + lng + ' ' + data + '<br />');
+                    }});
                 });
+             
            });
-        });                   
+        }});                   
     });   
 })(jQuery);    
 </script>
