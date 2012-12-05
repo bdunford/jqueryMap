@@ -37,20 +37,18 @@
         }
                     
         function dropPin(id, latlong, content, clickable, icon, onclick) {
-            mk = map.get('markers')[id];
-            if (id == 0)
+            var mk = map.get('markers')[id];
+            
+            if (mk) 
             {
-                if (mk) 
-                {
-                    mk.setMap(null);        
-                }
-            } else {
-                            
-                if (mk) 
-                {
-                    return;
-                }
+                if (id == 0) {
+                   mk.setMap(null);  
+                } else {
+                  return;  
+                } 
+                    
             }
+            
             map.addMarker({
                 'id': id, 
                 'position': latlong, 
