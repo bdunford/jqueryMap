@@ -17,8 +17,8 @@
                     var specificLocation; //= new google.maps.LatLng('39.606772','-84.139151');
                     var timeout; 
                     var map;
-                    var initialzoom = 10;
-                    var minzoom = 5;
+                    var initialzoom = 12;
+                    var minzoom = 8;
                     var geocoder = new google.maps.Geocoder();
                     
                     
@@ -26,28 +26,27 @@
                         
                     function addLocations() {
                         var bounds = map.get('map').getBounds();
-                        
-                        getLocations(bounds);
-                        
-                        dropPin('1',new google.maps.LatLng('39.601772','-84.133151'),'Store 1',true);
-                        dropPin('2',new google.maps.LatLng('39.602772','-84.133151'),'Store 2',true);
-                        dropPin('3',new google.maps.LatLng('39.603772','-84.133151'),'Store 3',true);
-                        dropPin('4',new google.maps.LatLng('39.604772','-84.133151'),'Store 4',true);
-                        dropPin('5',new google.maps.LatLng('44.754772','-78.083151'),'Store 4',true);
+                        console.log('Adding Locations');
+                        getLocations(bounds, function(data) {
+                            $.each(data, function(k, v) { 
+                                dropPin(v.id,new google.maps.LatLng(v.lat,v.lng),v.name,true);
+                            });
+                            
+                        });
                     }
                     
                     
-                    function getLocations(bounds)
+                    function getLocations(bounds, callback)
                     {
                         var ne = bounds.getNorthEast();
                         var sw = bounds.getSouthWest();
-                        console.log(ne.lat());
-                        console.log(ne.lng());
-                        console.log(sw.lat());
-                        console.log(sw.lng());
-                        console.log(map);
-                        
-                        //make a randomizer here
+                        var url = 'Locations.php?nelat=' + ne.lat() + '&nelng=' + ne.lng() + '&swlat=' + sw.lat() + '&swlng=' + sw.lng() 
+                        console.log(url);
+                         $.ajax({url: url, success: function(data) {
+                            callback(data);
+                         }, error: function(x,h,e){
+                            console.log(e);
+                         }});
                     }
                     
                     function dropPin(id, latlong, content, clickable, icon) {
@@ -142,6 +141,7 @@
                         geocoder.geocode( { 'address': addr }, function(results, status) {
                            if (status == google.maps.GeocoderStatus.OK) {
                                setLocationAndCenter(results[0].geometry.location);
+                               setZoom(initialzoom);
                            } 
                         });
                        
@@ -153,7 +153,8 @@
             })(jQuery);
         </script>
     </head>
-    <body>    
+    <body>
+      <div id="map-container">  
        <div id="map_canvas">
        </div>     
         <div id="map-controls">
@@ -161,6 +162,7 @@
                 <input id="address" type="text" />
                 <button id="btnEloc" type="button">&rsaquo;</button>
             </div>
+      </div>  
     </body>
     <footer>
     </footer>
