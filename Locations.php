@@ -23,7 +23,7 @@ $swlng = $_GET['swlng'];
 
 $username = "root";
 $password = "root";
-$con_string = "mysql:host=localhost;dbname=testdb";
+$con_string = "mysql:host=localhost;dbname=test";
 
 $con = new PDO($con_string,$username, $password);
 
