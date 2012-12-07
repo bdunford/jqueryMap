@@ -9,14 +9,16 @@
         <link type="text/css" rel="stylesheet" href="./css/screen.css"></link>
     </head>
     <body>
-      <div id="map-container">  
-       <div id="map_canvas">
-       </div>     
-        <div id="map-controls">
+      <div id="container"> 
+          <div id="controls">
                 <button id="btnCloc" type="button">O</button> 
                 <input id="address" type="text" />
                 <button id="btnEloc" type="button">&rsaquo;</button>
             </div>
+       <div id="map">
+       </div>     
+          <div id="location">
+          </div>
       </div>  
     </body>
     <footer>

@@ -14,9 +14,17 @@
             getLocations(bounds, function(data) {
                 $.each(data, function(k, v) { 
                     dropPin(v.id,new google.maps.LatLng(v.lat,v.lng),v,true,null,function(marker,data){
-                        //wire up click event here 
+                        $('<p>').text(data.name + );
                         console.log(data);
-                        console.log(marker);
+                        console.log(marker)
+                        
+                        /*$('#greatphoto').attr({
+                         alt: 'Beijing Brush Seller',
+                         title: 'photo by Kelly Clark'
+                         });*/
+                        
+                        //$('#location').
+                        
                     });
                 });
                             
@@ -101,7 +109,7 @@
             });
         }
 
-        $('#map_canvas').gmap({
+        $('#map').gmap({
             'zoom': initialzoom, 
             'disableDefaultUI':true, 
             'minZoom': minzoom, 
