@@ -2,29 +2,42 @@
     
     $(document).ready(function(){
         
+        //global
         var specificLocation;
         var timeout; 
         var map;
+        var selected;
+        var geocoder = new google.maps.Geocoder();
+        
+        //defaults
         var initialzoom = 12;
         var minzoom = 8;
-        var geocoder = new google.maps.Geocoder();
+        var currIcon = './images/current-location.png';
+        var selIcon = './images/map-pin-selected.png';
+        var defIcon = './images/map-pin-default.png';
+        var locUrl = 'Locations.php'
                 
         function addLocations() {
             var bounds = map.get('map').getBounds();
             getLocations(bounds, function(data) {
                 $.each(data, function(k, v) { 
-                    dropPin(v.id,new google.maps.LatLng(v.lat,v.lng),v,true,null,function(marker,data){
-                        $('<p>').text(data.name + );
+                    dropPin(v.id,new google.maps.LatLng(v.lat,v.lng),v,true,defIcon,function(marker,data){
+                        var addr = '<p>' + data.name + '<br />' + data.address + '<br />' + data.city + ', ' + data.state + ' ' + data.zip + '</p>';
+                        var phn = $('<a>').attr({href: 'tel:' + (new String(data.phone)).replace(/[^0-9]/g, '')}).text(data.phone);
+                        
+                        $('#location').html(addr);
+                        $('#location').append(phn);
+                        
                         console.log(data);
                         console.log(marker)
                         
-                        /*$('#greatphoto').attr({
-                         alt: 'Beijing Brush Seller',
-                         title: 'photo by Kelly Clark'
-                         });*/
-                        
-                        //$('#location').
-                        
+                        if (selected) {
+                            selected.setIcon(defIcon);
+                            selected.setZIndex(0);
+                        }
+                        marker.setIcon(selIcon);
+                        marker.setZIndex(999);
+                        selected = marker;
                     });
                 });
                             
@@ -35,7 +48,7 @@
         {
             var ne = bounds.getNorthEast();
             var sw = bounds.getSouthWest();
-            var url = 'Locations.php?nelat=' + ne.lat() + '&nelng=' + ne.lng() + '&swlat=' + sw.lat() + '&swlng=' + sw.lng() 
+            var url =  locUrl + '?nelat=' + ne.lat() + '&nelng=' + ne.lng() + '&swlat=' + sw.lat() + '&swlng=' + sw.lng() 
             $.ajax({
                 url: url, 
                 success: function(data) {
@@ -71,7 +84,7 @@
                     
         function setLocationAndCenter(location, callback) {
             map.get('map').setCenter(location);
-            dropPin('0',location,'Your Location',false,'./images/current-location.png' );
+            dropPin('0',location,'Your Location',false,currIcon );
             if (callback)
             {
                 callback(location);
